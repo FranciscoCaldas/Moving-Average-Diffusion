@@ -34,4 +34,14 @@ Hyperparameters can be adjusted in `configs/`, and more arguments about training
 
 
 ## Citation
-TO BE UPDATED
+If you find this repository useful for your work, please consider citing it as follows:
+
+```BibTeX
+@inproceedings{wang2025a,
+title={A Non-isotropic Time Series Diffusion Model with Moving Average Transitions},
+author={Chenxi Wang and Linxiao Yang and Zhixian Wang and Liang Sun and Yi Wang},
+booktitle={Forty-second International Conference on Machine Learning},
+year={2025},
+url={https://openreview.net/forum?id=yFF7hy8Mbh}
+}
+```

@@ -1,3 +1,13 @@
+# This Repo is a fork for comparison purposes.
+
+It now includes D-DM, decomposable diffusion model, for time-series forecasting using decomposition methods. The two included methods are fft and wavelets. other methods can be included.
+
+
+
+Below is the original repository, which we have used as the backbone, to perform more comparisons, for the original repo, go here,https://github.com/FranciscoCaldas/D-FDP , but this is one the code is much cleaner. 
+
+
+
 # (ICML2025) A Non-isotropic Time Series Diffusion Model with Moving Average Transitions
 *Authors: Chenxi Wang, Linxiao Yang, Zhixian Wang, Liang Sun and Yi Wang**
 

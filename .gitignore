@@ -36,6 +36,9 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
+#save_dir
+.save_dir/
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -323,3 +326,4 @@ wandb/run-20260505_192436-jep0h0o6/files/wandb-metadata.json
 wandb/run-20260505_192626-j9l402lo/run-j9l402lo.wandb
 wandb/run-20260505_192626-j9l402lo/files/requirements.txt
 wandb/run-20260505_192626-j9l402lo/files/wandb-metadata.json
+save_dir/ettm2_96_S/DIFFWAVE_fcst_bs64_condfcst/epoch=1-step=1520.ckpt

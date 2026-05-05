@@ -5,16 +5,17 @@ import tqdm
 import os
 from src.utils.filters import get_factors
 from src.utils.filters import MovingAvgTime
-
+from src.utils.vulpix_utils import calc_diffusion_hyperparams2
 thismodule = sys.modules[__name__]
 
 
-def get_schedule(noise_name, n_steps, check_pth, **kwargs):
+def get_schedule(noise_name, n_steps, check_pth, diffusion_hyperparams=None, **kwargs):
     file_name = os.path.join(
         check_pth,
         f"{noise_name}_sched_{n_steps}.pt",
     )
-    exist = os.path.exists(file_name)
+    #exist = os.path.exists(file_name)
+    exist = False
     if exist:
         print("Already exist!")
     else:
@@ -22,6 +23,11 @@ def get_schedule(noise_name, n_steps, check_pth, **kwargs):
         if noise_name in ["linear", "cosine", "zero"]:
             fn = getattr(thismodule, noise_name + "_schedule")
             noise_schedule = fn(n_steps)
+            torch.save(noise_schedule, file_name)
+
+        elif noise_name == "lineard":
+            fn = getattr(thismodule, noise_name + "_schedule")
+            noise_schedule = fn(n_steps, params=diffusion_hyperparams)
             torch.save(noise_schedule, file_name)
 
         elif noise_name == "std":
@@ -126,5 +132,46 @@ def std_schedule(n_steps, train_dl):
         "alphas": interp_all_K,
         "betas": torch.sqrt(1 - all_ratio**2).float(),
     }
+
+def lineard_schedule(n_steps, comp=1, min_beta=1e-4, max_beta=2e-2, params=None, **kwargs):
+    """Linear schedule variant that can be configured by a parameter dictionary.
+
+    Accepted dict keys in `params`: T, beta_0, beta_T, max_components.
+    Any unrelated keys (for example, max_components) are ignored.
+    """
+    if isinstance(params, dict):
+        n_steps = int(params.get("T", n_steps))
+        min_beta = float(params.get("beta_0", min_beta))
+        max_beta = float(params.get("beta_T", max_beta))
+        comp = int(params.get("max_components", comp))
+
+
+    comp = max(1, comp) # gurantee that there is at least 1 component
+
+    dh = calc_diffusion_hyperparams2(T=n_steps, beta_0=min_beta, beta_T=max_beta)
+    #betas = torch.linspace(min_beta, max_beta, n_steps)
+    #alphas = 1 - betas
+    #alpha_bars = torch.cumprod(alphas, dim=0)
+
+    if comp == 1:
+        return {
+            "alpha_bars": dh["Alpha_bar"].float(),
+            "beta_bars": None,
+            "alphas": dh["Alpha"].float(),
+            "betas": dh["Beta"].float(),
+            "sigma": dh["Sigma"].float(),
+        }
+    elif comp > 1:
+        target = dh["Alpha_bar"].float()[-1]
+        new_n_steps = n_steps // comp
+        b_T = -(torch.log(target) * 2) / new_n_steps - min_beta
+        dh = calc_diffusion_hyperparams2(T=new_n_steps, beta_0=min_beta, beta_T=b_T)  # // means floor
+        return {
+            "alpha_bars": dh["Alpha_bar"].float(),
+            "beta_bars": None,
+            "alphas": dh["Alpha"].float(),
+            "betas": dh["Beta"].float(),
+            "sigma": dh["Sigma"].float(),
+        }
 
 

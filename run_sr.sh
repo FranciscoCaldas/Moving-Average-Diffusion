@@ -4,7 +4,7 @@ gpu=0
 model_config=(MATSD_sr)
 
 num_train=5
-save_dir=/home/user/data2/ICML_camera_ready_test/sr
+save_dir=save_dir
 kernel_size=(3 6 12)
 pred_len=576
 data_pth=(mfred wind solar)

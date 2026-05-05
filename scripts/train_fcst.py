@@ -14,13 +14,13 @@ from src import models
 from src.utils.parser import exp_parser
 from src.utils.schedule import get_schedule
 
+from lightning.pytorch.loggers import WandbLogger
+
+
+
 
 def prepare_train(model_config, data_config, args, n):
     root_pth = args["save_dir"]
-
-    _, train_dl = data_provider(data_config, "train")
-    _, val_dl = data_provider(data_config, "val")
-    # _, test_dl = data_provider(data_config, "test")
 
     data_folder = os.path.join(
         root_pth,
@@ -32,6 +32,12 @@ def prepare_train(model_config, data_config, args, n):
         + f"_bs{data_config['batch_size']}_cond{data_config['condition']}",
     )
     os.makedirs(save_folder, exist_ok=True)
+    data_config["scaler_save_path"] = os.path.join(save_folder, "scaler_train.save")
+
+    _, train_dl = data_provider(data_config, "train")
+    _, val_dl = data_provider(data_config, "val")
+    # _, test_dl = data_provider(data_config, "test")
+
     with open(os.path.join(save_folder, "config.json"), "w") as w:
         json.dump(model_config, w, indent=2)
 
@@ -52,17 +58,18 @@ def prepare_train(model_config, data_config, args, n):
     ns_name = model_config["diff_config"].pop("noise_schedule")
 
     n_steps = model_config["diff_config"]["T"]
+    
+    diffusion_config = model_config['diff_config']['diffusion_config']
     ns_path = get_schedule(
         ns_name,
         n_steps,
         check_pth=data_folder,
+        diffusion_hyperparams=diffusion_config,
         train_dl=train_dl,
 
     )
     return model_config, ns_path, df, save_folder, train_dl, val_dl
-
-
-def main(args, n):
+def main(args,n):
     # MUST SETUP SEED AFTER prepare_train
     seed_everything(n, workers=True)
 
@@ -74,7 +81,7 @@ def main(args, n):
     model_config = yaml.safe_load(
         open(f'configs/model/{args["model_config"]}.yaml', "r")
     )
-    model_config = exp_parser(model_config, args)
+    model_config = exp_parser(model_config, args) #modifies config_file ( tipically does not do much, but can be used to override nested params like bb_config.cond_seq_len with --bb_config.cond_seq_len 128 for example)
 
     model_config, ns_path, df, save_folder, train_dl, val_dl = prepare_train(
         model_config, data_config, args, n
@@ -93,6 +100,9 @@ def main(args, n):
         patience=model_config["train_config"]["early_stop"],
     )
     mc = ModelCheckpoint(monitor="val_loss", dirpath=save_folder, save_top_k=1)
+
+    wandb_logger = WandbLogger(entity="mlspace",
+    project="Diffusion_part2",config=model_config, name=f"{args['model_config']}_{n}")
     trainer = Trainer(
         max_epochs=model_config["train_config"]["epochs"],
         deterministic=True,
@@ -102,6 +112,7 @@ def main(args, n):
         fast_dev_run=args["smoke_test"],
         enable_progress_bar=args["smoke_test"],
         check_val_every_n_epoch=model_config["train_config"]["val_step"],
+        logger=wandb_logger,
         # **model_config["train_config"],
     )
 

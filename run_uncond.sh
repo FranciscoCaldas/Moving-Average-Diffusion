@@ -3,7 +3,7 @@
 gpu=1
 model_config=(MATSD_uncond)
 
-save_dir=/home/user/data2/ICML_camera_ready_test/uncond
+save_dir=save_dir
 num_train=1
 # pred_len=24 means generating L=24 time series
 pred_len=(24)

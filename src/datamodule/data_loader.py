@@ -3,6 +3,7 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset
 from sklearn.preprocessing import StandardScaler
+import joblib
 
 # from data_provider.m4 import M4Dataset, M4Meta
 # from data_provider.uea import subsample, interpolate_missing, Normalizer
@@ -312,6 +313,7 @@ class Dataset_Custom(Dataset):
         timeenc=0,
         condition=None,
         kernel_size=None,
+        scaler_save_path=None,
         # freq="h",
         # seasonal_patterns=None,
     ):
@@ -342,6 +344,7 @@ class Dataset_Custom(Dataset):
         self.scale = scale
         self.timeenc = timeenc
         self.condition = condition
+        self.scaler_save_path = scaler_save_path
         # self.freq = freq
 
         self.root_path = root_path
@@ -377,6 +380,12 @@ class Dataset_Custom(Dataset):
             train_data = df_data[border1s[0] : border2s[0]]
             self.scaler.fit(train_data.values)
             data = self.scaler.transform(df_data.values)
+            if self.set_type == 0 and self.scaler_save_path is not None:
+                scaler_dir = os.path.dirname(self.scaler_save_path)
+                if scaler_dir:
+                    os.makedirs(scaler_dir, exist_ok=True)
+                joblib.dump(self.scaler, self.scaler_save_path)
+
         else:
             data = df_data.values
 

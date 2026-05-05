@@ -1,5 +1,8 @@
 from .ddpm import DDPM
 from .matsd import MATSD
+from .dddpm import DDDPM
+from .vulpix_caldas import VulpixCaldas
+from .vulpix_caldas import VulpixCaldas
 # from .madtc_blur import MADTC_Blur
 # from .madtc_blur_freq import MADTC_BlurFreq
 # from .cfm import CFM

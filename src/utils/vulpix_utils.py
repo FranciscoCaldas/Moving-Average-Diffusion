@@ -618,8 +618,8 @@ def training_loss_caldas(
 
     diffusion_steps = torch.randint(t_total, size=(b, 1, 1), device=device)
     components_steps = torch.randint(max_components, size=(b, 1, 1), device=device)
-    print(f"diffusion_steps: {diffusion_steps.view(-1).cpu().numpy()}")
-    print(f"components_steps: {components_steps.view(-1).cpu().numpy()}")
+    #print(f"diffusion_steps: {diffusion_steps.view(-1).cpu().numpy()}")
+    #print(f"components_steps: {components_steps.view(-1).cpu().numpy()}")
     transformed_x, transformed_x_prior, transformed_x_noise, dh, dk_scaled = apply_forward(
         audio,
         dh,

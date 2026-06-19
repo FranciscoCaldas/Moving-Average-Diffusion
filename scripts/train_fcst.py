@@ -106,13 +106,14 @@ def main(args,n):
     trainer = Trainer(
         max_epochs=model_config["train_config"]["epochs"],
         deterministic=True,
-        devices=[args["gpu"]],
+        devices="auto",
         callbacks=[es, mc],
         default_root_dir=save_folder,
         fast_dev_run=args["smoke_test"],
         enable_progress_bar=args["smoke_test"],
         check_val_every_n_epoch=model_config["train_config"]["val_step"],
         logger=wandb_logger,
+        accelerator="gpu",
         # **model_config["train_config"],
     )
 
@@ -140,7 +141,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--save_dir", default="/home/user/data/MAD/savings", type=str)
     parser.add_argument("--smoke_test", action="store_true")
-    parser.add_argument("--gpu", type=int, default=0)
+    parser.add_argument("--gpu", type=int, default=-1)
     parser.add_argument("--num_train", type=int, default=5)
 
     # override data params

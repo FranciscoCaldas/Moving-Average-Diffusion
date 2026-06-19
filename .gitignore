@@ -17,6 +17,7 @@ eggs/
 lib/
 lib64/
 parts/
+outputs/
 sdist/
 var/
 wheels/
@@ -327,3 +328,5 @@ wandb/run-20260505_192626-j9l402lo/run-j9l402lo.wandb
 wandb/run-20260505_192626-j9l402lo/files/requirements.txt
 wandb/run-20260505_192626-j9l402lo/files/wandb-metadata.json
 save_dir/ettm2_96_S/DIFFWAVE_fcst_bs64_condfcst/epoch=1-step=1520.ckpt
+--output=outputs/ettm2/slurm_output_13560.out
+run_fcst_dddpm.sh

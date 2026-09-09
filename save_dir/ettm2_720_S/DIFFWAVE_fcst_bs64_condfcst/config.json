@@ -1,0 +1,42 @@
+{
+  "bb_config": {
+    "name": "DiffWaveImputer",
+    "in_channels": null,
+    "res_channels": 64,
+    "skip_channels": 64,
+    "out_channels": null,
+    "num_res_layers": 12,
+    "dilation_cycle": 4,
+    "diffusion_step_embed_dim_in": 128,
+    "diffusion_step_embed_dim_mid": 512,
+    "diffusion_step_embed_dim_out": 512
+  },
+  "diff_config": {
+    "name": "DDDPM",
+    "noise_schedule": "lineard",
+    "T": 200,
+    "diffusion_config": {
+      "T": 200,
+      "beta_0": 0.001,
+      "beta_T": 0.02,
+      "max_components": 4
+    },
+    "masking": "forecast",
+    "missing_k": 2,
+    "max_components": 4,
+    "only_generate_missing": 1,
+    "monte_carlo": false,
+    "decomposition_method": "fft",
+    "fixed_components": true,
+    "loss_name": "mse",
+    "eval_sampling": false,
+    "guidance_weight": 1
+  },
+  "train_config": {
+    "epochs": 100,
+    "lr": 0.0002,
+    "early_stop": 5,
+    "val_step": 1,
+    "alpha": 1e-09
+  }
+}

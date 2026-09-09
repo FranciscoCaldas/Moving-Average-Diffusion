@@ -113,6 +113,7 @@ def main(args,n):
         enable_progress_bar=args["smoke_test"],
         check_val_every_n_epoch=model_config["train_config"]["val_step"],
         logger=wandb_logger,
+        accelerator="gpu",
         # **model_config["train_config"],
     )
 

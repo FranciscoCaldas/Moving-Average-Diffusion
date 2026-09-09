@@ -1,0 +1,114 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start debugpy: train_fcst",
+      "type": "shell",
+      "command": "${command:python.interpreterPath}",
+      "args": [
+        "-m",
+        "debugpy",
+        "--listen",
+        "5680",
+        "--wait-for-client",
+        "${workspaceFolder}/scripts/train_fcst.py",
+        "-dc",
+        "${input:dataConfig}",
+        "-mc",
+        "${input:modelConfig}",
+        "--save_dir",
+        "${input:saveDir}",
+        "--seq_len",
+        "${input:seqLen}",
+        "--pred_len",
+        "${input:predLen}",
+        "--gpu",
+        "${input:gpu}",
+        "--num_train",
+        "${input:numTrain}",
+        "--batch_size",
+        "64",
+        "--condition",
+        "fcst"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "dataConfig",
+      "type": "pickString",
+      "description": "Choose dataset (-dc)",
+      "options": [
+        "electricity",
+        "etth2",
+        "exchange_rate",
+        "traffic",
+        "weather",
+        "ettm2"
+      ],
+      "default": "ettm2"
+    },
+    {
+      "id": "modelConfig",
+      "type": "pickString",
+      "description": "Choose model config (-mc)",
+      "options": [
+        "DIFFWAVE_fcst",
+        "MATSD_fcst"
+      ],
+      "default": "DIFFWAVE_fcst"
+    },
+    {
+      "id": "saveDir",
+      "type": "promptString",
+      "description": "save_dir",
+      "default": "save_dir"
+    },
+    {
+      "id": "seqLen",
+      "type": "pickString",
+      "description": "seq_len",
+      "options": [
+        "96"
+      ],
+      "default": "96"
+    },
+    {
+      "id": "predLen",
+      "type": "pickString",
+      "description": "pred_len",
+      "options": [
+        "96",
+        "192",
+        "336",
+        "720"
+      ],
+      "default": "96"
+    },
+    {
+      "id": "gpu",
+      "type": "promptString",
+      "description": "gpu",
+      "default": "0"
+    },
+    {
+      "id": "numTrain",
+      "type": "promptString",
+      "description": "num_train",
+      "default": "1"
+    }
+  ]
+}
